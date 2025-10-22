@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:venuemanagement/student/registration.dart';
 
 class Eventpage extends StatefulWidget {
   const Eventpage({super.key});
@@ -8,8 +10,34 @@ class Eventpage extends StatefulWidget {
 }
 
 List<dynamic> events = [];
+Dio dio = Dio();
 
 class _EventpageState extends State<Eventpage> {
+  Future<void> get_event(context) async {
+    try {
+      final response = await dio.get('$baseurl/EventsApi/');
+      print(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          events = response.data;
+        });
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('registration failed')));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    get_event(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +72,7 @@ class _EventpageState extends State<Eventpage> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: 2,
+                  itemCount: events.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -58,7 +86,7 @@ class _EventpageState extends State<Eventpage> {
                           title: Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: Text(
-                              'Events Name',
+                              events[index]['Event'],
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -75,7 +103,7 @@ class _EventpageState extends State<Eventpage> {
                                   ),
                                   SizedBox(width: 10),
                                   Text(
-                                    'Venue',
+                                    events[index]['case_venue'],
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ],
@@ -89,8 +117,26 @@ class _EventpageState extends State<Eventpage> {
                                   ),
                                   SizedBox(width: 10),
                                   Text(
-                                    'Date',
+                                    events[index]['Date'],
                                     style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Description:',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      events[index]['Description'],
+                                      maxLines: 4,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ],
                               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:venuemanagement/student/login.dart';
 import 'package:venuemanagement/student/registration.dart';
+import 'package:venuemanagement/student/splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: loginpage(),
+      home: splash_page(),
     );
   }
 }

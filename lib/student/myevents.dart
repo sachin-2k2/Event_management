@@ -1,31 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
 import 'package:venuemanagement/student/registration.dart';
 
-class Venuespage extends StatefulWidget {
-  const Venuespage({super.key});
+class Myevents extends StatefulWidget {
+  const Myevents({super.key});
 
   @override
-  State<Venuespage> createState() => _VenuespageState();
+  State<Myevents> createState() => _MyeventsState();
 }
 
-List<dynamic> venues = [];
+List<dynamic> myevents = [];
 Dio dio = Dio();
 
-class _VenuespageState extends State<Venuespage> {
-  Future<void> get_venues(context) async {
+class _MyeventsState extends State<Myevents> {
+  Future<void> get_event(context) async {
     try {
-      final response = await dio.get('$baseurl/VenuesApi/');
+      final response = await dio.get('$baseurl/EventAssignApi');
       print(response.data);
       if (response.statusCode == 200 || response.statusCode == 201) {
         setState(() {
-          venues = response.data;
+          myevents = response.data;
         });
       } else {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(' failed')));
+        ).showSnackBar(SnackBar(content: Text('registration failed')));
       }
     } catch (e) {
       print(e);
@@ -36,7 +35,7 @@ class _VenuespageState extends State<Venuespage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    get_venues(context);
+    get_event(context);
   }
 
   @override
@@ -54,10 +53,11 @@ class _VenuespageState extends State<Venuespage> {
             ),
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 80),
               Text(
-                'VENUES',
+                'EVENTS',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 30,
@@ -70,10 +70,9 @@ class _VenuespageState extends State<Venuespage> {
                   color: const Color.fromARGB(206, 255, 255, 255),
                 ),
               ),
-              SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
-                  itemCount: venues.length,
+                  itemCount: myevents.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -81,13 +80,13 @@ class _VenuespageState extends State<Venuespage> {
                         color: Colors.black26,
                         child: ListTile(
                           leading: Icon(
-                            Icons.business_sharp,
+                            Icons.calendar_month_outlined,
                             color: Colors.white,
                           ),
                           title: Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: Text(
-                              venues[index]['VenueName'],
+                              myevents[index]['event_name'],
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -99,12 +98,12 @@ class _VenuespageState extends State<Venuespage> {
                               Row(
                                 children: [
                                   Text(
-                                    'Capacity :',
+                                    'Venue:',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   SizedBox(width: 10),
                                   Text(
-                                    venues[index]['Capacity'],
+                                    myevents[index]['event_venue'],
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ],
@@ -113,13 +112,31 @@ class _VenuespageState extends State<Venuespage> {
                               Row(
                                 children: [
                                   Text(
-                                    'Facilities :',
+                                    'Date:',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   SizedBox(width: 10),
                                   Text(
-                                    venues[index]['Facilities'],
+                                    myevents[index]['event_Date'],
                                     style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Description:',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      myevents[index]['event_Description'],
+                                      maxLines: 4,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ],
                               ),

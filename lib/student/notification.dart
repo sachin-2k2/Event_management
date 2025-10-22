@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:venuemanagement/student/events.dart';
+import 'package:venuemanagement/student/registration.dart';
 
 class Notificationpage extends StatefulWidget {
   const Notificationpage({super.key});
@@ -7,7 +10,38 @@ class Notificationpage extends StatefulWidget {
   State<Notificationpage> createState() => _NotificationpageState();
 }
 
+Dio dio = Dio();
+List<dynamic> notification = [];
+
 class _NotificationpageState extends State<Notificationpage> {
+  Future<void> get_notification(context) async {
+    try {
+      final response = await dio.get('$baseurl/NotificationApi/', );
+      print(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          notification = response.data;
+        });
+        // ScaffoldMessenger.of(context).showSnackBar(
+        // SnackBar(content: Text(' ')),
+        // );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('failed')));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    get_notification(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +75,7 @@ class _NotificationpageState extends State<Notificationpage> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: 2,
+                  itemCount: notification.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -49,7 +83,10 @@ class _NotificationpageState extends State<Notificationpage> {
                         color: Colors.black26,
                         child: ListTile(
                           title: Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0,top: 10),
+                            padding: const EdgeInsets.only(
+                              bottom: 10.0,
+                              top: 10,
+                            ),
                             child: Text(
                               'Notification',
                               style: TextStyle(color: Colors.white),
@@ -60,12 +97,12 @@ class _NotificationpageState extends State<Notificationpage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Content',
+                                notification[index]['Notification'],
                                 style: TextStyle(color: Colors.white),
                               ),
                               SizedBox(height: 20),
                               Text(
-                                'Date',
+                                notification[index]['Date'],
                                 style: TextStyle(color: Colors.white),
                               ),
                             ],
